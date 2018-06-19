@@ -2,6 +2,10 @@ document.addEventListener("DOMContentLoaded", function (event)
 {
 	var canvas1 = document.querySelector( "#canvas" );
 	var wave1 = new wave( canvas1, canvas1.width, canvas1.height );
+	wave1.init();
+	wave1.push2();
+	//window.requestAnimationFrame( wave1.loop() );
+	wave1.loop();
 });
 
 class wave {
@@ -18,8 +22,8 @@ class wave {
 		//this.image = this.ctx1.getImageData( 0, 0, width, height );
 		this.image = this.ctx1.createImageData(  width, height );
 
-		this.h = 0.01;
-		this.c = 0.01;
+		this.h = 0.5;
+		this.c = 0.5;
 	}
 
 	calc() {
@@ -69,10 +73,19 @@ class wave {
 	}
 
 	push() {
-		let idx = this.width / 2 * this.width + 100;
-		for( let x=100; x<this.width - 100; x++ ) {
+		let idx = this.width / 2 * this.width + 200;
+		for( let x=200; x<this.width - 200; x++ ) {
 			this.now[ idx ] = -100.0;
 			this.past[ idx++ ] = -100.0;
+		}
+	}
+
+	push2() {
+		for( let y=254; y<258; y++ ) {
+			for( let x=254; x<258; x++ ) {
+				this.now[ y * this.width + x ] = -100.0;
+				this.past[ y * this.width + x ] = -100.0;
+			}
 		}
 	}
 
@@ -81,5 +94,14 @@ class wave {
 	}
 	getImage() {
 		return this.image;
+	}
+
+	loop() {
+		requestAnimationFrame( () => {
+			this.draw();
+			this.calc();
+			this.loop();
+		});
+		//window.requestAnimationFrame(this.loop);
 	}
 }
